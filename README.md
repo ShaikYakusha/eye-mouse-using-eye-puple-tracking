@@ -74,7 +74,8 @@ while True:
     
     cv2.imshow('Eye Controlled Mouse', frame)
     cv2.waitKey(1)
-Usage
+
+#Usage
 Clone this repository to your local machine.
 Install the required Python packages.
 Run the Python script using the command:
