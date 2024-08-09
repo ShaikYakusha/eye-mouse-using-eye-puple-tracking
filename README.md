@@ -25,57 +25,10 @@ To run this project, you need to have Python installed along with the following 
 3. **Mouse Movement**: The position of the eyes is mapped to the screen coordinates, allowing the mouse pointer to follow the user's eye movement.
 4. **Blink Detection**: The vertical distance between two specific eye landmarks is used to detect blinks. If a blink is detected, a mouse click is simulated.
 
+
+
 ## Code Explanation
 
-The main loop of the program continuously reads frames from the webcam, processes the frames to detect facial landmarks, and then maps the eye positions to screen coordinates. If a blink is detected, the application triggers a mouse click.
-
-```python
-import cv2
-import mediapipe as mp
-import pyautogui
-
-# Initialize webcam and FaceMesh
-cam = cv2.VideoCapture(0)
-face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
-screen_w, screen_h = pyautogui.size()
-
-while True:
-    _, frame = cam.read()
-    frame = cv2.flip(frame, 1)
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    output = face_mesh.process(rgb_frame)
-    landmark_points = output.multi_face_landmarks
-    frame_h, frame_w, _ = frame.shape
-    
-    if landmark_points:
-        landmarks = landmark_points[0].landmark
-        
-        # Track eye landmarks for mouse movement
-        for id, landmark in enumerate(landmarks[474:478]):
-            x = int(landmark.x * frame_w)
-            y = int(landmark.y * frame_h)
-            cv2.circle(frame, (x, y), 3, (0, 255, 0))
-            
-            if id == 1:
-                screen_x = screen_w * landmark.x
-                screen_y = screen_h * landmark.y
-                pyautogui.moveTo(screen_x, screen_y)
-        
-        # Track landmarks for blink detection
-        left = [landmarks[145], landmarks[159]]
-        for landmark in left:
-            x = int(landmark.x * frame_w)
-            y = int(landmark.y * frame_h)
-            cv2.circle(frame, (x, y), 3, (0, 255, 255))
-        
-        if (left[0].y - left[1].y) < 0.004:
-            pyautogui.click()
-            pyautogui.sleep(1)
-    
-    cv2.imshow('Eye Controlled Mouse', frame)
-    cv2.waitKey(1)
-
-#Usage
 Clone this repository to your local machine.
 Install the required Python packages.
 Run the Python script using the command:
